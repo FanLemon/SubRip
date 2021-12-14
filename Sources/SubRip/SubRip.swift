@@ -38,7 +38,7 @@ import Foundation
 /// There was no danger at all.
 ///
 
-protocol TimeIntegerLiteral {
+public protocol TimeIntegerLiteral {
     
     static var numeralBase: Int { get }
     
@@ -56,7 +56,7 @@ protocol TimeIntegerLiteral {
 }
 
 
-extension TimeIntegerLiteral {
+public extension TimeIntegerLiteral {
     
     static func time(value: Int) -> Self {
         return Self.init(intValue: min(max(value, 0), Self.numeralBase-1))
@@ -95,43 +95,43 @@ extension TimeIntegerLiteral {
 }
 
 
-struct TimeNumeraBase24: TimeIntegerLiteral {
+public struct TimeNumeraBase24: TimeIntegerLiteral {
     
-    static var numeralBase: Int = 24
+    public static var numeralBase: Int = 24
     
-    static var literalWidth: Int = 2
+    public static var literalWidth: Int = 2
     
-    var integerValue: Int = 0
+    public var integerValue: Int = 0
     
-    init(intValue: Int) {
+    public init(intValue: Int) {
         integerValue = intValue
     }
 }
 
 
-struct TimeNumeraBase60: TimeIntegerLiteral {
+public struct TimeNumeraBase60: TimeIntegerLiteral {
     
-    static var numeralBase: Int = 60
+    public static var numeralBase: Int = 60
     
-    static var literalWidth: Int = 2
+    public static var literalWidth: Int = 2
     
-    var integerValue: Int = 0
+    public var integerValue: Int = 0
     
-    init(intValue: Int) {
+    public init(intValue: Int) {
         integerValue = intValue
     }
 }
 
 
-struct TimeNumeraBase1000: TimeIntegerLiteral {
+public struct TimeNumeraBase1000: TimeIntegerLiteral {
     
-    static var numeralBase: Int = 1000
+    public static var numeralBase: Int = 1000
     
-    static var literalWidth: Int = 3
+    public static var literalWidth: Int = 3
     
-    var integerValue: Int = 0
+    public var integerValue: Int = 0
     
-    init(intValue: Int) {
+    public init(intValue: Int) {
         integerValue = intValue
     }
 }
@@ -143,21 +143,21 @@ struct TimeNumeraBase1000: TimeIntegerLiteral {
 /// hours:minutes:seconds,milliseconds
 /// 00:03:18,608
 ///
-struct Timecode: Equatable {
+public struct Timecode: Equatable {
     
-    var hours: TimeNumeraBase24
-    var minutes: TimeNumeraBase60
-    var seconds: TimeNumeraBase60
-    var milliseconds: TimeNumeraBase1000
+    public var hours: TimeNumeraBase24
+    public var minutes: TimeNumeraBase60
+    public var seconds: TimeNumeraBase60
+    public var milliseconds: TimeNumeraBase1000
     
-    init() {
+    public init() {
         hours = TimeNumeraBase24(intValue: 0)
         minutes = TimeNumeraBase60(intValue: 0)
         seconds = TimeNumeraBase60(intValue: 0)
         milliseconds = TimeNumeraBase1000(intValue: 0)
     }
     
-    static func split(_ description: String) -> [String]? {
+    public static func split(_ description: String) -> [String]? {
         /// 0  1  2
         /// -- -- ------
         /// 00:03:18,608
@@ -213,7 +213,7 @@ struct Timecode: Equatable {
     static let MILLISECONDS_PER_MINUTE = 60 * Timecode.MILLISECONDS_PER_SECOND
     static let MILLISECONDS_PER_HOUR = 60 * Timecode.MILLISECONDS_PER_MINUTE
     
-    init(milliseconds ms: Int) {
+    public init(milliseconds ms: Int) {
         var millis = max(ms, 0)
         
         let hour = millis / Timecode.MILLISECONDS_PER_HOUR
@@ -233,7 +233,7 @@ struct Timecode: Equatable {
         milliseconds = TimeNumeraBase1000(intValue: millisecond)
     }
     
-    var millisecondsValue: Int {
+    public var millisecondsValue: Int {
         let mmm = milliseconds.integerValue
         let sss = seconds * Timecode.MILLISECONDS_PER_SECOND
         let min = minutes * Timecode.MILLISECONDS_PER_MINUTE
@@ -242,23 +242,23 @@ struct Timecode: Equatable {
         return hhh + min + sss + mmm
     }
     
-    static func +(lhs: Timecode, rhs: Int) -> Timecode {
+    public static func +(lhs: Timecode, rhs: Int) -> Timecode {
         return Timecode(milliseconds: lhs.millisecondsValue + rhs)
     }
     
-    static func -(lhs: Timecode, rhs: Int) -> Timecode {
+    public static func -(lhs: Timecode, rhs: Int) -> Timecode {
         return Timecode(milliseconds: lhs.millisecondsValue - rhs)
     }
     
-    static func +(lhs: Timecode, rhs: Timecode) -> Timecode {
+    public static func +(lhs: Timecode, rhs: Timecode) -> Timecode {
         return Timecode(milliseconds: lhs.millisecondsValue + rhs.millisecondsValue)
     }
     
-    static func -(lhs: Timecode, rhs: Timecode) -> Timecode {
+    public static func -(lhs: Timecode, rhs: Timecode) -> Timecode {
         return Timecode(milliseconds: lhs.millisecondsValue - rhs.millisecondsValue)
     }
     
-    static func == (lhs: Timecode, rhs: Timecode) -> Bool {
+    public static func == (lhs: Timecode, rhs: Timecode) -> Bool {
         return lhs.millisecondsValue == rhs.millisecondsValue
     }
     
@@ -268,19 +268,19 @@ struct Timecode: Equatable {
 ///
 /// 00:02:19,482 --> 00:02:21,609
 ///
-struct TimeDuration: Equatable {
+public struct TimeDuration: Equatable {
     
     static let delimiterBlock = " --> "
     
-    var start: Timecode
-    var end: Timecode
+    public var start: Timecode
+    public var end: Timecode
     
-    init(startTime: Timecode, endTime: Timecode) {
+    public init(startTime: Timecode, endTime: Timecode) {
         start = startTime
         end = endTime
     }
     
-    init?(_ description: String) {
+    public init?(_ description: String) {
         let sample = "00:02:19,482 --> 00:02:21,609"
         
         guard sample.count == description.count else {
@@ -300,64 +300,64 @@ struct TimeDuration: Equatable {
         end = t2
     }
     
-    var description: String {
+    public var description: String {
         return start.description + TimeDuration.delimiterBlock + end.description
     }
     
-    var milliseconds: Int {
+    public var milliseconds: Int {
         return (end - start).millisecondsValue
     }
     
-    static func +(lhs: TimeDuration, rhs: Int) -> TimeDuration {
+    public static func +(lhs: TimeDuration, rhs: Int) -> TimeDuration {
         return TimeDuration(startTime: lhs.start + rhs, endTime: lhs.end + rhs)
     }
     
-    static func -(lhs: TimeDuration, rhs: Int) -> TimeDuration {
+    public static func -(lhs: TimeDuration, rhs: Int) -> TimeDuration {
         return TimeDuration(startTime: lhs.start - rhs, endTime: lhs.end - rhs)
     }
     
-    static func == (lhs: TimeDuration, rhs: TimeDuration) -> Bool {
+    public static func == (lhs: TimeDuration, rhs: TimeDuration) -> Bool {
         return lhs.start == rhs.start && lhs.end == rhs.end
     }
     
 }
 
 
-struct Subtitle: Equatable {
+public struct Subtitle: Equatable {
     
     static let newline = "\n"
     
-    var sequentialNumber: Int
-    var time: TimeDuration
-    var text: String
-    let blank: String = Subtitle.newline
+    public var sequentialNumber: Int
+    public var time: TimeDuration
+    public var text: String
+    public let blank: String = Subtitle.newline
     
-    var description: String {
+    public var description: String {
         return String(sequentialNumber) + Subtitle.newline
         + time.description + Subtitle.newline
         + text + blank
     }
     
-    static func +(lhs: Subtitle, rhs: Int) -> Subtitle {
+    public static func +(lhs: Subtitle, rhs: Int) -> Subtitle {
         var result = lhs
         result.time = lhs.time + rhs
         return result
     }
     
-    static func == (lhs: Subtitle, rhs: Subtitle) -> Bool {
+    public static func == (lhs: Subtitle, rhs: Subtitle) -> Bool {
         return lhs.sequentialNumber == rhs.sequentialNumber &&
                 lhs.time == rhs.time &&
                 lhs.text == rhs.text
     }
     
-    func split() -> [Subtitle] {
+    public func split() -> [Subtitle] {
         let (left, right) = Subtitle.divideText(text: text)
         
         return [Subtitle(sequentialNumber: sequentialNumber, time: time, text: left),
                 Subtitle(sequentialNumber: sequentialNumber, time: time, text: right)]
     }
     
-    static func divideText(text: String) -> (String, String) {
+    public static func divideText(text: String) -> (String, String) {
         var left = ""
         var right = ""
         
@@ -392,15 +392,15 @@ struct Subtitle: Equatable {
 }
 
 
-struct SubRip: Equatable {
+public struct SubRip: Equatable {
     
-    var subtitles: [Subtitle]
+    public var subtitles: [Subtitle]
     
-    init(subs: [Subtitle]) {
+    public init(subs: [Subtitle]) {
         subtitles = subs
     }
     
-    init(srtFileContent: String) {
+    public init(srtFileContent: String) {
         let sourceLines = srtFileContent.components(separatedBy: CharacterSet.newlines)
         
         // Append 2 fake lines for reducing check last time
@@ -446,13 +446,13 @@ struct SubRip: Equatable {
         subtitles = subs
     }
     
-    var srtFileContent: String {
+    public var srtFileContent: String {
         return subtitles.reduce("") { partialResult, s in
             return partialResult + s.description
         }
     }
     
-    static func +(lhs: SubRip, rhs: Int) -> SubRip {
+    public static func +(lhs: SubRip, rhs: Int) -> SubRip {
         let subs = lhs.subtitles.map { sub in
             return sub + rhs
         }
@@ -460,7 +460,7 @@ struct SubRip: Equatable {
         return SubRip(subs: subs)
     }
     
-    func split() -> [SubRip] {
+    public func split() -> [SubRip] {
         var left = [Subtitle]()
         var right = [Subtitle]()
         
@@ -472,5 +472,15 @@ struct SubRip: Equatable {
         
         return [SubRip(subs: left),
                 SubRip(subs: right)]
+    }
+    
+    public static func load(filePath: String) throws -> SubRip {
+        let sourceFileContent = try String(contentsOfFile: filePath)
+        
+        return SubRip(srtFileContent: sourceFileContent)
+    }
+    
+    public static func write(filePath: String, subrip: SubRip) throws {
+        try subrip.srtFileContent.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
     }
 }
